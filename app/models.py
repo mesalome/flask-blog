@@ -25,6 +25,7 @@ class User(db.Model):
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
 
     # Establishing one-to-many relationship with "posts"
     posts = db.relationship("Post", back_populates="user")

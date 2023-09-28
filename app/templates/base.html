@@ -22,8 +22,8 @@
           </ul>
           <ul class="nav">
             {% if g.user %}
-            <li class="nav-item px-2 py-2">{{ g.user['username'].capitalize() }}</li>
-            <li class="nav-item"><a href="{{ url_for('auth.logout') }}" class="nav-link link-body-emphasis px-2">Log Out</a></li>
+            <li class="nav-item px-2 py-2">{{ g.user[2].capitalize()}} {{g.user[3].capitalize()}}</li>
+            <li class="nav-item "><a href="{{ url_for('auth.logout') }}" class="nav-link link-danger px-2">Log Out</a></li>
             {% else %}
             <li class="nav-item"><a href="{{ url_for('auth.register') }}" class="nav-link link-body-emphasis px-2">Register</a></li>
             <li class="nav-item"><a href="{{ url_for('auth.login') }}" class="nav-link link-body-emphasis px-2">Log In</a></li>
