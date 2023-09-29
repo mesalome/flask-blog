@@ -40,7 +40,6 @@ def upgrade():
     sa.Column('title', sa.String(length=255), nullable=False),
     sa.Column('content', sa.String(length=1000), nullable=False),
     sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('picture', sa.LargeBinary(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -55,7 +54,8 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('post_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], )
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('user_id', 'post_id')
     )
     op.drop_table('groceries')
     op.drop_table('persons')

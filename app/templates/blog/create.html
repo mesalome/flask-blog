@@ -8,18 +8,15 @@
   <div class="container">
     <form method="post" enctype="multipart/form-data">
       <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
+        <label for="title" class="form-label mt-5">Title</label>
         <input name="title" id="title" class="form-control" value="{{ request.form['title'] }}" required>
       </div>
       <div class="mb-3">
-        <label for="body" class="form-label">Body</label>
-        <textarea name="body" id="body" class="form-control">{{ request.form['body'] }}</textarea>
-      </div>
-      <div class="mb-3">
-        <label for="image" class="form-label">Select some images:</label>
-        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+        <label for="content" class="form-label">Content</label>
+        <textarea name="content" id="content" class="form-control" minlength="80" maxlength = "1000" rows="8">{{ request.form['content'] }}</textarea>
       </div>
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
+    
   </div>
 {% endblock %}

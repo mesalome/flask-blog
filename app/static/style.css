@@ -16,3 +16,15 @@
 .my-background {
     background-image: linear-gradient(to left, #4192b3, #dd5046, #efd249);
   }
+
+.min-heigh-210px{
+  min-height: 210px;
+}
+
+.my-button:not(:disabled):not(:disabled):active {
+  background-color: green;
+} 
+
+.remove_line{
+  text-decoration:none
+}

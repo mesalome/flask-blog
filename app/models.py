@@ -11,8 +11,8 @@ user_group_association = db.Table(
 # Associative table for many-to-many relationship between "users" and "favourite_posts"
 favourite_posts_association = db.Table(
     "favourite_posts_association",
-    db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
-    db.Column("post_id", db.Integer, db.ForeignKey("posts.id")),
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id", ondelete="CASCADE")),
+    db.Column("post_id", db.Integer, db.ForeignKey("posts.id", ondelete="CASCADE")),
 )
 
 
@@ -66,7 +66,6 @@ class Post(db.Model):
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.String(1000), nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
-    picture = db.Column(db.LargeBinary)
 
     # Establishing many-to-one relationship with "users"
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))

@@ -25,7 +25,7 @@ def register():
         spaces_in_password = re.search(' ', password)
         
         def strong_password(text):
-                return re.search(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+={[}\]|:;\"'<,>.?/]).{8,}$", text)
+            return re.search(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+={[}\]|:;\"'<,>.?/]).{8,}$", text)
         
         if not username:
             error = 'Username is required.'
@@ -35,11 +35,10 @@ def register():
             error = 'Password is required.'
         elif spaces_in_password:
             error = "Password can't contain spaces."
-        elif len(password)<8:
-            error = "Password must contain at least 8 char"
+        elif len(password) < 8:
+            error = "Password must contain at least 8 characters."
         elif not strong_password(password):
-            error = "Password must contain Upper and Lower case letters, Numbers and Special Characters"
-
+            error = "Password must contain upper and lower case letters, numbers, and special characters."
 
         if error is None:
             try:
@@ -53,11 +52,32 @@ def register():
             except psycopg2.IntegrityError:
                 error = f"User {username} is already registered."
             else:
+                cursor = db.cursor()
+                cursor.execute("SELECT * FROM groups")
+                available_groups = cursor.fetchall()
+                cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
+                user_id = cursor.fetchone()
+                for group in available_groups:
+                    group_id = group[0]
+                    field_name = f"group_{group_id}"
+                    if field_name in request.form and request.form[field_name] == "on":
+                        cursor.execute(
+                            "INSERT INTO user_group_association (user_id, group_id) VALUES (%s, %s)",
+                            (user_id, group_id)
+                        )
+                
+                db.commit()
+                cursor.close()
                 return redirect(url_for("auth.login"))
-
+        
         flash(error, "danger")
 
-    return render_template('auth/register.html')
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM groups")
+    groups = cursor.fetchall()
+    return render_template('auth/register.html', groups=groups)
+
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -85,11 +105,6 @@ def login():
                 error = 'Incorrect username.'
             elif not check_password_hash(user[5], password):
                 error = 'Incorrect password.'
-
-            if user is None:
-                error = 'Incorrect username.'
-            elif not check_password_hash(user[5], password):
-                error = f'Incorrect password. Stored password: {user[5]}, Entered password: {password}'
 
             if error is None:
                 session.clear()
