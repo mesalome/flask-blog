@@ -26,3 +26,6 @@ app.register_blueprint(blog.bp)
 
 from app import about
 app.register_blueprint(about.bp)
+
+from app import admin
+app.register_blueprint(admin.bp)
