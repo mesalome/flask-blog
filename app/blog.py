@@ -24,7 +24,8 @@ def index():
     # )
     posts = sharing_group_posts(user)
     # cursor.close()
-    return render_template('blog/index.html', posts=posts, current_url=request.path)
+    user_groups = user_groups_func()
+    return render_template('blog/index.html', posts=posts, current_url=request.path, user_groups = user_groups)
 
 @bp.route('/favourites')
 @login_required
@@ -46,8 +47,10 @@ def favourites():
 
     posts = cursor.fetchall()
     cursor.close()
+
+    user_groups = user_groups_func()
     
-    return render_template('blog/favourites.html', posts=posts, current_url=request.path)
+    return render_template('blog/favourites.html', posts=posts, current_url=request.path, user_groups=user_groups)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -81,8 +84,8 @@ def create():
             cursor.close()
 
             return redirect(url_for('blog.index'))
-
-    return render_template('blog/create.html')
+    user_groups = user_groups_func()
+    return render_template('blog/create.html', user_groups = user_groups)
 
 
 
@@ -113,8 +116,10 @@ def update(id):
             db.commit()
             cursor.close()
             return redirect(url_for('blog.index'))
+        
+    user_groups = user_groups_func()
 
-    return render_template('blog/update.html', post=post)
+    return render_template('blog/update.html', post=post, user_groups = user_groups)
 
 
 @bp.route('/<int:id>/delete', methods=('POST',))
@@ -161,8 +166,11 @@ def read(id):
         return "Post not found", 404
     
     is_favourite = favourite_post_of_user(user, id)
+
+    
     # Render the 'read.html' template for GET requests
-    return render_template('blog/read.html', post=post, is_favourite =  is_favourite)
+    user_groups = user_groups_func()
+    return render_template('blog/read.html', post=post, is_favourite =  is_favourite, user_groups = user_groups)
 
 
 def get_post(id):
@@ -218,6 +226,26 @@ def sharing_group_posts(user):
 
     results = cursor.fetchall()
     cursor.close()
+
+    return results
+
+def user_groups_func():
+    user_id = g.user[0] if g.user else None
+    if user_id is None:
+        return []  # Return an empty list if the user is not logged in
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        'SELECT DISTINCT g.name FROM user_group_association as us_gr '
+        'JOIN groups as g ON us_gr.group_id = g.id '
+        'WHERE us_gr.user_id = %s',
+        (user_id,)
+    )
+    results = cursor.fetchall()
+    cursor.close()
+
+    print(results)  # Print the results to check if they are correct
 
     return results
 
