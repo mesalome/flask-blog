@@ -15,15 +15,9 @@ bp = Blueprint('blog', __name__, url_prefix='/blog')
 @login_required
 def index():
     user = g.user[0]
-    # db = get_db()
-    # cursor = db.cursor()
-    # cursor.execute(
-    #     'SELECT p.id, p.title, p.content, p.created, u.username, p.user_id'
-    #     ' FROM posts p JOIN users u ON p.user_id = u.id'
-    #     ' ORDER BY created DESC'
-    # )
+
     posts = sharing_group_posts(user)
-    # cursor.close()
+
     user_groups = user_groups_func()
     return render_template('blog/index.html', posts=posts, current_url=request.path, user_groups = user_groups)
 
@@ -243,9 +237,7 @@ def user_groups_func():
         (user_id,)
     )
     results = cursor.fetchall()
-    cursor.close()
-
-    print(results)  # Print the results to check if they are correct
+    cursor.close() 
 
     return results
 
