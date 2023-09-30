@@ -6,8 +6,7 @@ from werkzeug.exceptions import abort
 from app.auth import login_required
 from app.db import get_db
 from datetime import datetime
-import io
-import base64 
+
 
 bp = Blueprint('blog', __name__, url_prefix='/blog')
 
